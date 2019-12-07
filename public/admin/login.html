@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sign in &laquo; Admin</title>
+    <link
+      rel="stylesheet"
+      href="../assets/vendors/bootstrap/css/bootstrap.css"
+    />
+    <link rel="stylesheet" href="../assets/css/admin.css" />
+  </head>
+  <body>
+    <div class="login">
+      <div class="login-wrap">
+        <img class="avatar" src="../assets/img/default.png" />
+        <!-- 有错误信息时展示 -->
+        <!-- <div class="alert alert-danger">
+        <strong>错误！</strong> 用户名或密码错误！
+      </div> -->
+        <div class="form-group">
+          <label for="email" class="sr-only">邮箱</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            placeholder="邮箱"
+            autofocus
+          />
+        </div>
+        <div class="form-group">
+          <label for="password" class="sr-only">密码</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            placeholder="密码"
+          />
+        </div>
+        <button class="btn btn-primary btn-block" id="loginbtn">登 录</button>
+      </div>
+    </div>
+    <script src="/assets/vendors/jquery/jquery.min.js"></script>
+    <script>
+      //绑定事件
+      $("#loginbtn").on("click", function() {
+        //获取元素:邮箱 密码
+        var email = $("#email").val();
+        var password = $("#password").val();
+        //判断邮箱
+        if (email.trim().length == 0) {
+          alert("输入邮箱");
+          return;
+        }
+        //判断密码
+        if (password.trim().length == 0) {
+          alert("请输入密码");
+          return;
+        }
+        //获取接口内容
+        $.ajax({
+          type: "post",
+          url: "/login",
+          data: { email: email, password: password },
+          success: function(response) {
+            // 登录成功 跳转到数据管理的首页面
+            location.href = "index.html";
+          },
+          error: function() {
+            // 登录失败
+            alert("用户名或者密码错误");
+          }
+        });
+      });
+
+      //当用户点击了退出登录，此时，我们需要请求服务器路径，告诉服务器，当前用户进行了退出操作
+      //给退出按钮做绑定事件
+      $("#logout").on("click", function() {
+        //做一个弹出框 提醒用户是不是按错了
+        var isConfirm = confirm("你真的要退出吗");
+        //给一个判断(确定退出和点击错误的)
+        if (isConfirm) {
+          //用户确定要退出 就发送网络请求
+          $.ajax({
+            url: "/logout",
+            type: "post",
+            success: function(data) {
+              //接口文档返回的数据是：{"message": "退出成功"}；退出成功，跳转到登录页面
+              location.href = "login.html";
+            },
+            error: () => {
+              alert("退出失败");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
